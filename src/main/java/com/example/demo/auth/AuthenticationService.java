@@ -35,6 +35,7 @@ public class AuthenticationService {
     }
 
     public AuthenticationResponse authenticate(AuthenticationRequest request) {
+        // ??? 这一步应该是用于验证email和密码是否匹配，不匹配抛出异常，匹配则更新上下文
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
                         request.getEmail(),
@@ -46,6 +47,7 @@ public class AuthenticationService {
         var jwtToken = jwtService.generateToken(user);
         return AuthenticationResponse.builder()
                 .token(jwtToken)
+                .userId(user.getId())
                 .build();
     }
 }
