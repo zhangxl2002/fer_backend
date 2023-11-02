@@ -10,17 +10,18 @@ import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @CrossOrigin(origins = "*")
-@RequestMapping("/api/v1/users")
+@RequestMapping("/api/v1")
 @RequiredArgsConstructor
 public class ImageController {
     private final ImageService imageService;
     private final JwtService jwtService;
     private final UserRepository userRepository;
-    @PostMapping("/{userId}/image")
+    @PostMapping("users/{userId}/image")
     public ResponseEntity<String> uploadImage(
             @RequestHeader("Authorization") String authHeader,
             @PathVariable("userId") Long userId,
-            @RequestParam("file") MultipartFile file
+            @RequestParam("file") MultipartFile image
+//            @RequestParam("images") MultipartFile[] images
     ) {
         final String jwtToken;
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
@@ -31,6 +32,14 @@ public class ImageController {
                 .orElse(new User()).getId().equals(userId)){
             throw new RuntimeException("No access permission");
         }
-        return ResponseEntity.ok(imageService.saveImage(userId, file));
+        return ResponseEntity.ok(imageService.saveImage(userId, image));
+    }
+
+    @PostMapping("users/image")
+    public ResponseEntity<String> classifyImage(
+            @RequestHeader("Authorization") String authHeader,
+            @RequestParam("file") MultipartFile image
+    ) {
+        return ResponseEntity.ok(imageService.classifyImage(image));
     }
 }
