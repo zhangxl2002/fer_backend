@@ -46,10 +46,6 @@ public class User implements UserDetails {
         return Collections.singletonList(authority);
     }
 
-    public String getEmail() {
-        return email;
-    }
-
     @Override
     public String getPassword() {
         return password;
