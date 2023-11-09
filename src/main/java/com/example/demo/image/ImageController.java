@@ -23,12 +23,13 @@ public class ImageController {
     private final ImageService imageService;
     private final JwtService jwtService;
     private final UserRepository userRepository;
+
+    //为指定用户添加图片
     @PostMapping("users/{userId}/image")
     public ResponseEntity<String> uploadImage(
             @RequestHeader("Authorization") String authHeader,
             @PathVariable("userId") Long userId,
             @RequestParam("file") MultipartFile file
-//            @RequestParam("images") MultipartFile[] images
     ) {
         final String jwtToken;
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
@@ -42,17 +43,7 @@ public class ImageController {
         return ResponseEntity.ok(imageService.saveImage(userId, file));
     }
 
-
-//    @GetMapping("users/{userId}/image/{imageName}")
-//    public @ResponseBody byte[] getImage(
-//            @RequestHeader("Authorization") String authHeader,
-//            @PathVariable("userId") Long userId,
-//            @PathVariable("imageName") String imageName
-//    ) throws IOException {
-//        InputStream in = getClass()
-//                .getResourceAsStream("/com/baeldung/produceimage/image.jpg");
-//        return IOUtils.toByteArray(in);
-//    }
+    //根据图片名字拿到图片文件
     @GetMapping("users/{userId}/image/{imageName}")
     public ResponseEntity<ByteArrayResource> getImage1(
             @RequestHeader("Authorization") String authHeader,
@@ -68,34 +59,12 @@ public class ImageController {
                 .orElse(new User()).getId().equals(userId)){
             throw new RuntimeException("No access permission");
         }
-//        HttpHeaders headers = new HttpHeaders();
-//        headers.setContentType(MediaType.MULTIPART_FORM_DATA);
-//        MultiValueMap<String, Object> body= new LinkedMultiValueMap<>();
-
         MultipartFile file = imageService.getImage(userId, imageName);
         ByteArrayResource resource = new ByteArrayResource(file.getBytes());
-//        body.add("circularAttachment", new ByteArrayResource(file.getBytes()));
-
         return ResponseEntity.ok(resource);
     }
-//    @GetMapping("users/{userId}/image/{imageId}")
-//    public ResponseEntity<MultipartFile> getImage(
-//            @RequestHeader("Authorization") String authHeader,
-//            @PathVariable("userId") Long userId,
-//            @PathVariable("imageId") Long imageId
-//    ) {
-//        final String jwtToken;
-//        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
-//            throw new RuntimeException("Token exception");
-//        }
-//        jwtToken = authHeader.substring(7);
-//        if (!userRepository.findByEmail(jwtService.extractUsername(jwtToken))
-//                .orElse(new User()).getId().equals(userId)){
-//            throw new RuntimeException("No access permission");
-//        }
-//        return ResponseEntity.ok(imageService.getImage(userId, imageId));
-//    }
 
+    //拿到某个用户的所有图片的名字
     @GetMapping("users/{userId}/images")
     public ResponseEntity<ImagesResponse> getImages(
             @RequestHeader("Authorization") String authHeader,
@@ -113,6 +82,7 @@ public class ImageController {
         return ResponseEntity.ok(imageService.getImages(userId));
     }
 
+    //识别图片
     @PostMapping("users/image")
     public ResponseEntity<String> classifyImage(
             @RequestHeader("Authorization") String authHeader,

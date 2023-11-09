@@ -58,11 +58,7 @@ public class ImageService {
                 .orElseThrow(() -> new RuntimeException(
                         String.format("Image: %s not found,userId: %d", imageName,userId)
                 ));
-//        if (images.isEmpty()) {
-//            throw new RuntimeException(String.format("Image: %s not found,userId: %d", imageName,userId));
-//        }
         String path =  image.getPath();
-//        String path = images.get(0).getPath();
         Path filePath = Paths.get(path);
         if (Files.exists(filePath) && Files.isRegularFile(filePath)) {
             byte[] fileBytes;

@@ -22,15 +22,19 @@ public class AuthenticationService {
     private final AuthenticationManager authenticationManager;
     public AuthenticationResponse register(RegisterRequest request) {
         var user = User.builder()
-                .name(request.getUsername())
+                .name(request.getName())
                 .email(request.getEmail())
+                //密码存储编码后的形式
                 .password(passwordEncoder.encode(request.getPassword()))
+                //只支持普通用户
                 .userRole(UserRole.USER)
                 .build();
         repository.save(user);
         var jwtToken = jwtService.generateToken(user);
         return AuthenticationResponse.builder()
                 .token(jwtToken)
+                .userId(user.getId())
+                .name(user.getName())
                 .build();
     }
 
@@ -48,6 +52,7 @@ public class AuthenticationService {
         return AuthenticationResponse.builder()
                 .token(jwtToken)
                 .userId(user.getId())
+                .name(user.getName())
                 .build();
     }
 }
